@@ -16,10 +16,14 @@ from homeassistant.const import (
     CONF_STATE,
     STATE_OFF,
     STATE_ON,
-    EVENT_HOMEASSISTANT_START
+    STATE_IDLE,
+    EVENT_HOMEASSISTANT_START,
+    SERVICE_TURN_ON,
+    SERVICE_TURN_OFF
 )
 
-from homeassistant.core import callback
+from homeassistant.core import EVENT_HOMEASSISTANT_START, callback
+
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_track_state_change
 
@@ -32,7 +36,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 _LOGGER = logging.getLogger(__name__)
 
-SUPPORT_NETWORK_EXPLORER = SUPPORT_TURN_OFF | SUPPORT_TURN_ON
+SUPPORT_NETWORK_EXPLORER = (SUPPORT_TURN_OFF | SUPPORT_TURN_ON)
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     name = config.get(CONF_NAME)
@@ -90,9 +94,20 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
 
     async def async_update(self):
         _LOGGER.info("update network_explorer:")
+    
+    def turn_on(self):
+        _LOGGER.info('ABout to turn on')
+        name = self._name
+        self.hass.states.set(f'{DOMAIN}.{name}', STATE_IDLE)
+        self._state = STATE_ON
+        return True
 
-
-
+    def turn_off(self):
+        _LOGGER.info('ABout to turn off')
+        self._state = STATE_OFF
+        name = self._name
+        self.hass.states.set(f'{DOMAIN}.{name}', STATE_OFF)
+        return True
 
 
 

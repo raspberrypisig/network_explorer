@@ -1,0 +1,10 @@
+{
+    "domain": "network_explorer",
+    "name": "Network Media Explorer",
+    "documentation": "https://example.com",
+    "dependencies": ["media_player"],
+    "codeowners": [],
+    "requirements": []
+  }
+  
+  

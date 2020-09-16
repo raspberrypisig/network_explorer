@@ -4,7 +4,7 @@
     "documentation": "https://example.com",
     "dependencies": ["media_player"],
     "codeowners": [],
-    "requirements": []
+    "requirements": ["aiohttp"]
   }
   
   

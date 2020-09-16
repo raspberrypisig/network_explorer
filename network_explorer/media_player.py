@@ -2,11 +2,14 @@ import logging
 
 import voluptuous as vol
 
-from homeassistant.components.media_player import PLATFORM_SCHEMA, MediaPlayerEntity
+from homeassistant.components.media_player import PLATFORM_SCHEMA, MediaPlayerEntity, BrowseMedia
 from homeassistant.components.media_player.const import (
     DOMAIN,
     SUPPORT_TURN_OFF,
-    SUPPORT_TURN_ON
+    SUPPORT_TURN_ON,
+    SUPPORT_BROWSE_MEDIA,
+    SUPPORT_PLAY_MEDIA,
+    MEDIA_TYPE_MUSIC
 )
 
 from homeassistant.const import (
@@ -27,6 +30,8 @@ from homeassistant.core import EVENT_HOMEASSISTANT_START, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_track_state_change
 
+from .browse_media import build_item_response, library_payload
+
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_NAME): cv.string
@@ -36,7 +41,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 _LOGGER = logging.getLogger(__name__)
 
-SUPPORT_NETWORK_EXPLORER = (SUPPORT_TURN_OFF | SUPPORT_TURN_ON)
+SUPPORT_NETWORK_EXPLORER = (SUPPORT_TURN_OFF | SUPPORT_TURN_ON | SUPPORT_BROWSE_MEDIA| SUPPORT_PLAY_MEDIA)
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     name = config.get(CONF_NAME)
@@ -110,6 +115,10 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
         return True
 
 
-
+    async def async_browse_media(self, media_content_type=None, media_content_id=None):
+        if media_content_id == None:
+            media_content_id = "http://192.168.20.99:8002/api/directories"
+        print(media_content_type, media_content_id)
+        return await library_payload(media_content_type, media_content_id)
 
 

@@ -2,6 +2,7 @@
     "domain": "network_explorer",
     "name": "Network Media Explorer",
     "documentation": "https://example.com",
+    "config_flow": true,
     "dependencies": ["media_player"],
     "codeowners": [],
     "requirements": ["aiohttp"]

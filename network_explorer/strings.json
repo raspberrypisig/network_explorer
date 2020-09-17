@@ -1,0 +1,14 @@
+{
+    "config": {
+        "step": {
+          "user": {
+             "title": "Fill In Details.",
+             "data" : {
+                "name": "Name",
+                "host": "Host",
+                "port": "Port"
+             }
+          }   
+        }
+    } 
+}

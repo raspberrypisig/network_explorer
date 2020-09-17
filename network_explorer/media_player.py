@@ -119,7 +119,6 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
         self.hass.states.set(f'{DOMAIN}.{name}', STATE_OFF)
         return True
 
-
     async def async_browse_media(self, media_content_type=None, media_content_id=None):
         if media_content_id == None:
             media_content_id = "http://192.168.20.99:8002/api/directories"

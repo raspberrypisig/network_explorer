@@ -3,7 +3,7 @@ import asyncio
 import logging
 
 from homeassistant.core import callback
-from .const import DOMAIN
+from .const import DOMAIN, PLATFORMS
 
 # The domain of your component. Should be equal to the name of your component.
 _LOGGER = logging.getLogger(__name__)
@@ -27,6 +27,16 @@ async def async_setup(hass, config):
     return True
 
 async def async_setup_entry(hass, entry):
-    _LOGGER.debug('SETUP ENTRY')
-    hass.data[DOMAIN]["boo"] = "boo"
+    _LOGGER.debug(hass.data)
+    _LOGGER.debug(entry.data)
+    name = entry.data["name"]
+    host = entry.data["host"]
+    port = entry.data["port"]
+
+    for component in PLATFORMS:
+        hass.async_create_task(
+            hass.config_entries.async_forward_entry_setup(entry, component)
+    )
+
+
     return True  

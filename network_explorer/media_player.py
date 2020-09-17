@@ -43,6 +43,11 @@ _LOGGER = logging.getLogger(__name__)
 
 SUPPORT_NETWORK_EXPLORER = (SUPPORT_TURN_OFF | SUPPORT_TURN_ON | SUPPORT_BROWSE_MEDIA| SUPPORT_PLAY_MEDIA)
 
+async def async_setup_entry(hass, entry, async_add_entities):
+    name = entry.data["name"]
+    player = NetworkExplorerMediaPlayer(hass, name)
+    async_add_entities([player])
+
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     name = config.get(CONF_NAME)
     player = NetworkExplorerMediaPlayer(hass, name)

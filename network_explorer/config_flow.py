@@ -31,8 +31,8 @@ class NetworkExplorerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self):
         """Initialize."""
         self.data_schema = {
-            vol.Required("name", default=""): str,
-            vol.Required("host", default=""): str,
+            vol.Optional("name", default=""): str,
+            vol.Optional("host", default=""): str,
             vol.Optional("port", default="8002"): str,
        }
 
@@ -46,7 +46,20 @@ class NetworkExplorerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     '''
 
     async def async_step_user(self, user_input=None, errors=None):
-        return self._show_form()
+        if user_input is not None:
+            return self.async_create_entry(            
+                title=user_input["name"],
+                 data={
+                "name": user_input["name"],
+                "host": user_input["host"],
+                "port": user_input["port"],
+            },)
+
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema(self.data_schema)
+        )  
         '''
         data_schema = vol.Schema(
             {
@@ -66,11 +79,3 @@ class NetworkExplorerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             }
         )
         '''
-
-    @callback
-    def _show_form(self, errors=None):
-        """Show the form to the user."""
-        return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema(self.data_schema)
-        )        

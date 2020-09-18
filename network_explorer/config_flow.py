@@ -31,9 +31,9 @@ class NetworkExplorerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self):
         """Initialize."""
         self.data_schema = {
-            vol.Optional("name", default=""): str,
-            vol.Optional("host", default=""): str,
-            vol.Optional("port", default="8002"): str,
+            vol.Required(CONF_NAME): str,
+            vol.Required(CONF_HOST): str,
+            vol.Optional(CONF_PORT, default=DEFAULT_PORT): str,
        }
 
     '''
@@ -50,9 +50,9 @@ class NetworkExplorerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_create_entry(            
                 title=user_input["name"],
                  data={
-                "name": user_input["name"],
-                "host": user_input["host"],
-                "port": user_input["port"],
+                CONF_NAME: user_input[CONF_NAME],
+                CONF_HOST: user_input[CONF_HOST],
+                CONF_PORT: user_input[CONF_PORT],
             },)
 
 

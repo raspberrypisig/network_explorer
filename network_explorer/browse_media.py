@@ -58,9 +58,9 @@ async def library_payload(media_content_type, media_content_id):
 
     async with aiohttp.ClientSession() as session:
         r =  await fetch(session, media_content_id)
-        print(r)
+        #print(r)
         d = [x['short'] for x in r]
-        print(d)
+        #print(d)
         for x in r:
             library_info.children.append(item_payload(x))
 

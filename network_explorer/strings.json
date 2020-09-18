@@ -4,7 +4,7 @@
           "user": {
              "title": "Fill In Details.",
              "data" : {
-                "name": "Name",
+                "name": "Media Player Name",
                 "host": "Host",
                 "port": "Port"
              }

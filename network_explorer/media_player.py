@@ -25,6 +25,12 @@ from homeassistant.const import (
     SERVICE_TURN_OFF
 )
 
+from homeassistant.const import (
+    CONF_HOST,
+    CONF_NAME,
+    CONF_PORT
+)
+
 from homeassistant.core import EVENT_HOMEASSISTANT_START, callback
 
 from homeassistant.helpers import config_validation as cv
@@ -44,22 +50,26 @@ _LOGGER = logging.getLogger(__name__)
 SUPPORT_NETWORK_EXPLORER = (SUPPORT_TURN_OFF | SUPPORT_TURN_ON | SUPPORT_BROWSE_MEDIA| SUPPORT_PLAY_MEDIA)
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    name = entry.data["name"]
-    player = NetworkExplorerMediaPlayer(hass, name)
+    name = entry.data[CONF_NAME]
+    host = entry.data[CONF_HOST]
+    port = entry.data[CONF_PORT]
+    player = NetworkExplorerMediaPlayer(hass, name, host , port)
     async_add_entities([player])
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    name = config.get(CONF_NAME)
-    player = NetworkExplorerMediaPlayer(hass, name)
+    name = config.data[CONF_NAME]
+    host = config.data[CONF_HOST]
+    port = config.data[CONF_PORT]
+    player = NetworkExplorerMediaPlayer(hass, name, host , port)
     async_add_entities([player])
 
-
-
 class NetworkExplorerMediaPlayer(MediaPlayerEntity):
-    def __init__(self, hass, name):
+    def __init__(self, hass, name, host, port):
         self.hass = hass
         self._state = STATE_OFF
         self._name = name
+        self.host = host
+        self.port = port
     
 
     async def async_added_to_hass(self):        

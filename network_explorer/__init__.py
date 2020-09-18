@@ -27,11 +27,9 @@ async def async_setup(hass, config):
     return True
 
 async def async_setup_entry(hass, entry):
-    _LOGGER.debug(hass.data)
-    _LOGGER.debug(entry.data)
-    name = entry.data["name"]
-    host = entry.data["host"]
-    port = entry.data["port"]
+    #name = entry.data["name"]
+    #host = entry.data["host"]
+    #port = entry.data["port"]
 
     for component in PLATFORMS:
         hass.async_create_task(

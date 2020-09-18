@@ -70,6 +70,7 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
         self._name = name
         self.host = host
         self.port = port
+        #self._unique_id = self._name.replace(" ", "_")
     
 
     async def async_added_to_hass(self):        
@@ -89,6 +90,7 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
 
         @callback    
         def network_explorer_player_startup(event):
+            _LOGGER.info("STARTUP NETWORK EXPLORER")
             async_track_state_change(self.hass, self._state, async_on_network_explorer_update)
 
 
@@ -96,7 +98,19 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
 
     @property
     def name(self):
+        #print(self._name)
+        #print(self.entity_id)
         return self._name
+
+    '''
+    @property
+    def unique_id(self):
+        """Return a unique ID."""
+        print("UNIQUE ID")
+        print(self._unique_id)
+        print(self.entity_id)
+        return self._unique_id
+    '''
 
     @property
     def should_poll(self):
@@ -117,16 +131,16 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
     
     def turn_on(self):
         _LOGGER.info('ABout to turn on')
-        name = self._name
-        self.hass.states.set(f'{DOMAIN}.{name}', STATE_IDLE)
+        #unique_id = self._unique_id
+        self.hass.states.set(f'{self.entity_id}', STATE_IDLE)
         self._state = STATE_ON
         return True
 
     def turn_off(self):
         _LOGGER.info('ABout to turn off')
         self._state = STATE_OFF
-        name = self._name
-        self.hass.states.set(f'{DOMAIN}.{name}', STATE_OFF)
+        #unique_id = self._unique_id
+        self.hass.states.set(f'{self.entity_id}', STATE_OFF)
         return True
 
     async def async_browse_media(self, media_content_type=None, media_content_id=None):

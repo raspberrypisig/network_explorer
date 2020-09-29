@@ -9,7 +9,9 @@ from homeassistant.components.media_player.const import (
     SUPPORT_TURN_ON,
     SUPPORT_BROWSE_MEDIA,
     SUPPORT_PLAY_MEDIA,
-    MEDIA_TYPE_MUSIC
+    MEDIA_TYPE_MUSIC,
+    MEDIA_TYPE_TRACK,
+    SERVICE_PLAY_MEDIA 
 )
 
 from homeassistant.const import (
@@ -36,7 +38,7 @@ from homeassistant.core import EVENT_HOMEASSISTANT_START, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_track_state_change
 
-from .browse_media import build_item_response, library_payload
+from .browse_media import build_item_response, library_payload, menu_payload
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -137,7 +139,7 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
         return True
 
     def turn_off(self):
-        _LOGGER.info('ABout to turn off')
+        ('ABout to turn off')
         self._state = STATE_OFF
         #unique_id = self._unique_id
         self.hass.states.set(f'{self.entity_id}', STATE_OFF)
@@ -145,9 +147,23 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
 
 
     async def async_browse_media(self, media_content_type=None, media_content_id=None):
-        if media_content_id == None:
-            media_content_id = "http://192.168.20.99:8002/api/directories"
         print(media_content_type, media_content_id)
+        if media_content_id == None:
+            return await menu_payload()
+            #media_content_id = "http://192.168.20.99:8002/api/directories"
         return await library_payload(media_content_type, media_content_id)
 
 
+    def play_media(self,  media_type, media_id, **kwargs):
+        _LOGGER.info(media_type)
+        _LOGGER.info(media_id)
+        _LOGGER.info(kwargs)
+
+    async def async_play_media(self, media_type, media_id, **kwargs):
+        """Play a piece of media."""
+        service_data = {
+            "entity_id": "media_player.rumpus_room_speaker",
+            "media_content_id": media_id,
+            "media_content_type": media_type
+        }
+        await self.hass.services.async_call(DOMAIN, SERVICE_PLAY_MEDIA, service_data)

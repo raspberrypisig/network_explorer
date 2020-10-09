@@ -155,10 +155,13 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
             return await menu_payload()
         elif media_content_type == 'library' and media_content_id.endswith('/ha/playersfull'):
             mediaentities = self.hass.data[DOMAIN].entities
-            print(list(mediaentities))
+            #print(list(mediaentities))
+            players = [x.name for x in mediaentities if x.name not in self.hass.data[NETWORK_EXPLORER_DOMAIN]]            
             entities = self.hass.data[NETWORK_EXPLORER_DOMAIN]
-            print(list(entities))            
-            return await players_payload(media_content_id)
+            data = entities[self.name]
+            return await players_payload(media_content_id, players, data)
+        elif '/api/speakers/' in media_content_id:
+            return await menu_payload()
         return await library_payload(media_content_type, media_content_id)
 
 

@@ -116,10 +116,14 @@ async def menu_payload():
 
     return menu_info
 
-async def players_payload(media_content_id):
+async def players_payload(media_content_id, players, data):
+    host = data['host']
+    port = data['port']
+    media_content_id_url = f'http://{host}:{port}/api/home'
+    print(media_content_id_url)
     players_info = BrowseMedia(
         media_class=MEDIA_CLASS_DIRECTORY,
-        media_content_id="http://192.168.20.99:8002/api/home",
+        media_content_id=media_content_id_url,
         media_content_type="library",
         title="Available Media Players",
         can_play=False,
@@ -127,11 +131,14 @@ async def players_payload(media_content_id):
         children=[],
     )
 
-    async with aiohttp.ClientSession() as session:
-        r =  await fetch(session, media_content_id)
-        for x in r:
-            players_info.children.append(menu_item_payload(title=x["short"], media_content_type="library", media_content_id=x["full"]))
+    #async with aiohttp.ClientSession() as session:
+    #    r =  await fetch(session, media_content_id)
+    #    for x in r:
+    #        players_info.children.append(menu_item_payload(title=x["short"], media_content_type="library", media_content_id=x["full"]))
 
+    for player in players:
+        playerurl = f'http://{host}:{port}/api/speakers/{player}'
+        players_info.children.append(menu_item_payload(title=player, media_content_type="library", media_content_id=playerurl))
     
     return players_info
             

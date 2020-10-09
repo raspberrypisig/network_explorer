@@ -30,7 +30,10 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, entry):
     title = entry.title
-    hass.data[DOMAIN] = [{title: dict(entry.data)}]
+    if DOMAIN not in hass.data:
+        hass.data[DOMAIN] = {title: dict(entry.data)}
+    else:
+        hass.data[DOMAIN][title] = dict(entry.data)
 
     for component in PLATFORMS:
         hass.async_create_task(

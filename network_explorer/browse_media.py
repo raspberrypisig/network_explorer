@@ -54,7 +54,7 @@ async def fetch(session, url):
     async with session.get(url) as response:
         return await response.json()
 
-async def library_payload(media_content_type, media_content_id):
+async def library_payload(media_content_type, media_content_id, host, port):
     library_info = BrowseMedia(
         media_class=MEDIA_CLASS_DIRECTORY,
         media_content_id=media_content_id,
@@ -72,7 +72,7 @@ async def library_payload(media_content_type, media_content_id):
         #print(d)
         for x in r:
             title = x['short']
-            content_id = f'http://192.168.20.99:8002/api/directories/{title}'
+            content_id = f'http://{host}:{port}/api/directories/{title}'
             x['media_content_id'] = content_id
             library_info.children.append(item_payload(x))
 
@@ -89,15 +89,15 @@ async def library_payload(media_content_type, media_content_id):
             x["media_content_type"] = 'music'
             library_info.children.append(item_payload(x, MEDIA_CLASS_APP, 'music', can_play=True, can_expand=False))        
 
-    print("library info:")
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(library_info.as_dict())
+    #print("library info:")
+    #pp = pprint.PrettyPrinter(indent=4)
+    #pp.pprint(library_info.as_dict())
     return library_info    
 
-async def menu_payload():
+async def menu_payload(host, port):
     menu_info = BrowseMedia(
         media_class=MEDIA_CLASS_DIRECTORY,
-        media_content_id="http://192.168.20.99:8002/api/home",
+        media_content_id=f"http://{host}:{port}/api/home",
         media_content_type="library",
         title="Network Explorer Library",
         can_play=False,
@@ -106,9 +106,9 @@ async def menu_payload():
     )
 
     menu_options = [
-        {"title": "Select media player(None)", "media_content_id": "http://192.168.20.99:8002/ha/playersfull", "media_content_type": "library", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/cast/v7/24px.svg"},
-        {"title": "Play song", "media_content_id": "http://192.168.20.99:8002/api/directories", "media_content_type": "directory", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/play_circle_outline/v6/24px.svg"},
-        {"title": "Playlist", "media_content_id": "http://www.example.com?mediaplayer", "media_content_type": "directory", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/playlist_play/v5/24px.svg"}
+        {"title": "Select media player(None)", "media_content_id": f"http://{host}:{port}/ha/playersfull", "media_content_type": "library", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/cast/v7/24px.svg"},
+        {"title": "Play song", "media_content_id": f"http://{host}:{port}/api/directories", "media_content_type": "directory", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/play_circle_outline/v6/24px.svg"},
+        {"title": "Playlist", "media_content_id": f"http://www.example.com?mediaplayer", "media_content_type": "directory", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/playlist_play/v5/24px.svg"}
     ]
 
     for x in menu_options:
@@ -116,9 +116,7 @@ async def menu_payload():
 
     return menu_info
 
-async def players_payload(media_content_id, players, data):
-    host = data['host']
-    port = data['port']
+async def players_payload(media_content_id, players, host, port):
     media_content_id_url = f'http://{host}:{port}/api/home'
     print(media_content_id_url)
     players_info = BrowseMedia(
@@ -137,8 +135,13 @@ async def players_payload(media_content_id, players, data):
     #        players_info.children.append(menu_item_payload(title=x["short"], media_content_type="library", media_content_id=x["full"]))
 
     for player in players:
-        playerurl = f'http://{host}:{port}/api/speakers/{player}'
+        playerurl = f'http://{host}:{port}/api/defaultplayer/{player}'
         players_info.children.append(menu_item_payload(title=player, media_content_type="library", media_content_id=playerurl))
     
     return players_info
             
+async def getDefaultPlayer(host, port):
+    async with aiohttp.ClientSession() as session:
+        r =  await fetch(session, f'http://{host}:{port}/api/defaultplayer')
+        return r
+

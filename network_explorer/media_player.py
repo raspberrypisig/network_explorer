@@ -38,7 +38,7 @@ from homeassistant.core import EVENT_HOMEASSISTANT_START, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_track_state_change
 
-from .browse_media import build_item_response, library_payload, menu_payload, players_payload
+from .browse_media import build_item_response, library_payload, menu_payload, players_payload, getDefaultPlayer
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -148,21 +148,26 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
 
     async def async_browse_media(self, media_content_type=None, media_content_id=None):
         print(media_content_type, media_content_id)
+        entities = self.hass.data[NETWORK_EXPLORER_DOMAIN]
+        data = entities[self.name]
+        host = data['host']
+        port = data['port']
+
         if media_content_id == None:
-            return await menu_payload()
+            return await menu_payload(host, port)
             #media_content_id = "http://192.168.20.99:8002/api/directories"
         elif media_content_type == 'library' and media_content_id.endswith('/api/home'):
-            return await menu_payload()
+            return await menu_payload(host, port)
         elif media_content_type == 'library' and media_content_id.endswith('/ha/playersfull'):
             mediaentities = self.hass.data[DOMAIN].entities
             #print(list(mediaentities))
             players = [x.name for x in mediaentities if x.name not in self.hass.data[NETWORK_EXPLORER_DOMAIN]]            
-            entities = self.hass.data[NETWORK_EXPLORER_DOMAIN]
-            data = entities[self.name]
-            return await players_payload(media_content_id, players, data)
-        elif '/api/speakers/' in media_content_id:
-            return await menu_payload()
-        return await library_payload(media_content_type, media_content_id)
+            #entities = self.hass.data[NETWORK_EXPLORER_DOMAIN]
+            #data = entities[self.name]
+            return await players_payload(media_content_id, players, host, port)
+        elif '/api/defaultplayer/' in media_content_id:
+            return await menu_payload(host, port)
+        return await library_payload(media_content_type, media_content_id, host, port)
 
 
     def play_media(self,  media_type, media_id, **kwargs):
@@ -171,9 +176,14 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
         _LOGGER.info(kwargs)
 
     async def async_play_media(self, media_type, media_id, **kwargs):
+        entities = self.hass.data[NETWORK_EXPLORER_DOMAIN]
+        data = entities[self.name]
+        host = data['host']
+        port = data['port']
+        player = await getDefaultPlayer(host, port)
         """Play a piece of media."""
         service_data = {
-            "entity_id": "media_player.rumpus_room_speaker",
+            "entity_id": player,
             "media_content_id": media_id,
             "media_content_type": media_type
         }

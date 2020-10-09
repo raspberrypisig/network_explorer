@@ -24,6 +24,7 @@ from homeassistant.components.media_player.const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+@config_entries.HANDLERS.register(DOMAIN)
 class NetworkExplorerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL

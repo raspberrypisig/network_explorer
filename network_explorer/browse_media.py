@@ -106,7 +106,7 @@ async def menu_payload():
     )
 
     menu_options = [
-        {"title": "Select media player(Rumpus Rumpus Rumpus Rumpus)", "media_content_id": "http://192.168.20.99:8002/ha/playersfull", "media_content_type": "library", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/cast/v7/24px.svg"},
+        {"title": "Select media player(None)", "media_content_id": "http://192.168.20.99:8002/ha/playersfull", "media_content_type": "library", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/cast/v7/24px.svg"},
         {"title": "Play song", "media_content_id": "http://192.168.20.99:8002/api/directories", "media_content_type": "directory", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/play_circle_outline/v6/24px.svg"},
         {"title": "Playlist", "media_content_id": "http://www.example.com?mediaplayer", "media_content_type": "directory", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/playlist_play/v5/24px.svg"}
     ]

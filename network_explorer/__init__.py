@@ -29,6 +29,9 @@ async def async_setup(hass, config):
     return True
 
 async def async_setup_entry(hass, entry):
+    title = entry.title
+    hass.data[DOMAIN] = [{title: dict(entry.data)}]
+
     for component in PLATFORMS:
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(entry, component)

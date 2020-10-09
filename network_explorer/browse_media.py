@@ -38,7 +38,7 @@ def item_payload(item, media_class=MEDIA_CLASS_DIRECTORY, media_content_type='li
         thumbnail=None,
     )
 
-def menu_item_payload(title, media_content_type, media_content_id, thumbnail ):
+def menu_item_payload(title, media_content_type, media_content_id, thumbnail=None ):
         return BrowseMedia(
         title=title,
         media_class=MEDIA_CLASS_DIRECTORY,
@@ -97,7 +97,7 @@ async def library_payload(media_content_type, media_content_id):
 async def menu_payload():
     menu_info = BrowseMedia(
         media_class=MEDIA_CLASS_DIRECTORY,
-        media_content_id=None,
+        media_content_id="http://192.168.20.99:8002/api/home",
         media_content_type="library",
         title="Network Explorer Library",
         can_play=False,
@@ -106,7 +106,7 @@ async def menu_payload():
     )
 
     menu_options = [
-        {"title": "Select media player(Rumpus Rumpus Rumpus Rumpus)", "media_content_id": "http://www.example.com?mediaplayer", "media_content_type": "library", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/cast/v7/24px.svg"},
+        {"title": "Select media player(Rumpus Rumpus Rumpus Rumpus)", "media_content_id": "http://192.168.20.99:8002/ha/playersfull", "media_content_type": "library", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/cast/v7/24px.svg"},
         {"title": "Play song", "media_content_id": "http://192.168.20.99:8002/api/directories", "media_content_type": "directory", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/play_circle_outline/v6/24px.svg"},
         {"title": "Playlist", "media_content_id": "http://www.example.com?mediaplayer", "media_content_type": "directory", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/playlist_play/v5/24px.svg"}
     ]
@@ -115,3 +115,23 @@ async def menu_payload():
         menu_info.children.append(menu_item_payload(title=x["title"], media_content_type=x["media_content_type"], media_content_id=x["media_content_id"], thumbnail=x["thumbnail"]))
 
     return menu_info
+
+async def players_payload(media_content_id):
+    players_info = BrowseMedia(
+        media_class=MEDIA_CLASS_DIRECTORY,
+        media_content_id="http://192.168.20.99:8002/api/home",
+        media_content_type="library",
+        title="Available Media Players",
+        can_play=False,
+        can_expand=True,
+        children=[],
+    )
+
+    async with aiohttp.ClientSession() as session:
+        r =  await fetch(session, media_content_id)
+        for x in r:
+            players_info.children.append(menu_item_payload(title=x["short"], media_content_type="library", media_content_id=x["full"]))
+
+    
+    return players_info
+            

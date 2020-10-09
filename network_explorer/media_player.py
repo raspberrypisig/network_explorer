@@ -1,7 +1,7 @@
 import logging
 
 import voluptuous as vol
-
+from .const import DOMAIN as NETWORK_EXPLORER_DOMAIN
 from homeassistant.components.media_player import PLATFORM_SCHEMA, MediaPlayerEntity, BrowseMedia
 from homeassistant.components.media_player.const import (
     DOMAIN,
@@ -38,7 +38,7 @@ from homeassistant.core import EVENT_HOMEASSISTANT_START, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_track_state_change
 
-from .browse_media import build_item_response, library_payload, menu_payload
+from .browse_media import build_item_response, library_payload, menu_payload, players_payload
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -151,6 +151,14 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
         if media_content_id == None:
             return await menu_payload()
             #media_content_id = "http://192.168.20.99:8002/api/directories"
+        elif media_content_type == 'library' and media_content_id.endswith('/api/home'):
+            return await menu_payload()
+        elif media_content_type == 'library' and media_content_id.endswith('/ha/playersfull'):
+            mediaentities = self.hass.data[DOMAIN].entities
+            print(list(mediaentities))
+            entities = self.hass.data[NETWORK_EXPLORER_DOMAIN]
+            print(list(entities))            
+            return await players_payload(media_content_id)
         return await library_payload(media_content_type, media_content_id)
 
 

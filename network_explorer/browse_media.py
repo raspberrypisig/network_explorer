@@ -145,3 +145,7 @@ async def getDefaultPlayer(host, port):
         r =  await fetch(session, f'http://{host}:{port}/api/defaultplayer')
         return r
 
+async def setPlayer(media_content_id):
+    async with aiohttp.ClientSession() as session:
+        await fetch(session, media_content_id)
+

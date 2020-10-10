@@ -38,7 +38,7 @@ from homeassistant.core import EVENT_HOMEASSISTANT_START, callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_track_state_change
 
-from .browse_media import build_item_response, library_payload, menu_payload, players_payload, getDefaultPlayer
+from .browse_media import build_item_response, library_payload, menu_payload, players_payload, getDefaultPlayer, setPlayer
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -166,6 +166,7 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
             #data = entities[self.name]
             return await players_payload(media_content_id, players, host, port)
         elif '/api/defaultplayer/' in media_content_id:
+            await setPlayer(media_content_id)
             return await menu_payload(host, port)
         return await library_payload(media_content_type, media_content_id, host, port)
 

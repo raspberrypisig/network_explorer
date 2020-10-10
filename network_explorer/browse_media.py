@@ -71,7 +71,7 @@ async def library_payload(media_content_type, media_content_id, host, port):
         #d = [x['short'] for x in r]
         #print(d)
         for x in r:
-            title = x['short']
+            title = x['path']
             content_id = f'http://{host}:{port}/api/directories/{title}'
             x['media_content_id'] = content_id
             library_info.children.append(item_payload(x))
@@ -83,7 +83,7 @@ async def library_payload(media_content_type, media_content_id, host, port):
         #d = [x['short'] for x in r]
         #print(d)
         for x in r:
-            title = x["short"]
+            title = x["path"]
             x["media_content_id"] = f'{media_content_id}/{title}'
             x["media_content_id"] = x["media_content_id"].replace('api/files/','')
             x["media_content_type"] = 'music'

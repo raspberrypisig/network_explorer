@@ -1,5 +1,5 @@
 """Network Explorer Custom component."""
-import asyncio
+#import asyncio
 import logging
 
 from homeassistant.core import callback

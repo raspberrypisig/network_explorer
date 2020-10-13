@@ -154,10 +154,10 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
         port = data['port']
 
         if media_content_id == None:
-            return await menu_payload(host, port)
+            return await menu_payload(host, port, self.hass, self.name)
             #media_content_id = "http://192.168.20.99:8002/api/directories"
         elif media_content_type == 'library' and media_content_id.endswith('/api/home'):
-            return await menu_payload(host, port)
+            return await menu_payload(host, port, self.hass, self.name)
         elif media_content_type == 'library' and media_content_id.endswith('/ha/playersfull'):
             mediaentities = self.hass.data[DOMAIN].entities
             #print(list(mediaentities))
@@ -167,7 +167,7 @@ class NetworkExplorerMediaPlayer(MediaPlayerEntity):
             return await players_payload(media_content_id, players, host, port)
         elif '/api/defaultplayer/' in media_content_id:
             await setPlayer(media_content_id)
-            return await menu_payload(host, port)
+            return await menu_payload(host, port, self.hass, self.name)
         return await library_payload(media_content_type, media_content_id, host, port)
 
 

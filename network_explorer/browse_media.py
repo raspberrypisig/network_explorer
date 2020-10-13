@@ -17,7 +17,9 @@ CONTENT_TYPE_MEDIA_CLASS = {
     MEDIA_TYPE_CHANNELS: MEDIA_CLASS_DIRECTORY,
 }
 
+
 import aiohttp
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 def build_item_response(coordinator, payload):
     pass
@@ -53,6 +55,13 @@ def menu_item_payload(title, media_content_type, media_content_id, thumbnail=Non
 async def fetch(session, url):
     async with session.get(url) as response:
         return await response.json()
+
+async def getDefaultPlayerFriendlyName(host, port, hass):
+    session = async_get_clientsession(hass)
+    r = await fetch(session, f'http://{host}:{port}/api/defaultplayerfriendlyname')
+    if r == None:
+        r = "None"
+    return r
 
 async def library_payload(media_content_type, media_content_id, host, port):
     library_info = BrowseMedia(
@@ -94,19 +103,21 @@ async def library_payload(media_content_type, media_content_id, host, port):
     #pp.pprint(library_info.as_dict())
     return library_info    
 
-async def menu_payload(host, port):
+async def menu_payload(host, port, hass, title):
+    player = await getDefaultPlayerFriendlyName(host, port, hass)
+
     menu_info = BrowseMedia(
         media_class=MEDIA_CLASS_DIRECTORY,
         media_content_id=f"http://{host}:{port}/api/home",
         media_content_type="library",
-        title="Network Explorer Library",
+        title=f"{title}(Default player: {player})",
         can_play=False,
         can_expand=True,
         children=[],
     )
 
     menu_options = [
-        {"title": "Select media player(None)", "media_content_id": f"http://{host}:{port}/ha/playersfull", "media_content_type": "library", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/cast/v7/24px.svg"},
+        {"title": "Select media player", "media_content_id": f"http://{host}:{port}/ha/playersfull", "media_content_type": "library", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/cast/v7/24px.svg"},
         {"title": "Play song", "media_content_id": f"http://{host}:{port}/api/directories", "media_content_type": "directory", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/play_circle_outline/v6/24px.svg"},
         {"title": "Playlist", "media_content_id": f"http://www.example.com?mediaplayer", "media_content_type": "directory", "thumbnail": "https://fonts.gstatic.com/s/i/materialicons/playlist_play/v5/24px.svg"}
     ]

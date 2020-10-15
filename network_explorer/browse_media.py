@@ -54,7 +54,7 @@ def menu_item_payload(title, media_content_type, media_content_id, thumbnail=Non
 #http://www.pngall.com/wp-content/uploads/5/Video-Player-PNG-Picture.png
 
 async def fetch(session, url):
-    async with session.get(url, verify_ssl=True) as response:
+    async with session.get(url, verify_ssl=False) as response:
         return await response.json()
 
 async def getDefaultPlayerFriendlyName(host, port, hass):

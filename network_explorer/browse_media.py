@@ -19,6 +19,7 @@ CONTENT_TYPE_MEDIA_CLASS = {
 
 
 import aiohttp
+import mimetypes
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 def build_item_response(coordinator, payload):
@@ -63,6 +64,10 @@ async def getDefaultPlayerFriendlyName(host, port, hass):
         r = "None"
     return r
 
+def getmediacontenttype(media_content_id):
+    kind = mimetypes.guess_type(media_content_id)
+    return kind[0].split('/')[0]
+
 async def library_payload(media_content_type, media_content_id, host, port):
     library_info = BrowseMedia(
         media_class=MEDIA_CLASS_DIRECTORY,
@@ -93,10 +98,12 @@ async def library_payload(media_content_type, media_content_id, host, port):
         #print(d)
         for x in r:
             title = x["short"]
+
             x["media_content_id"] = f'{media_content_id}/{title}'
             x["media_content_id"] = x["media_content_id"].replace('api/files/','')
-            x["media_content_type"] = 'music'
-            library_info.children.append(item_payload(x, MEDIA_CLASS_APP, 'music', can_play=True, can_expand=False))        
+            #x["media_content_type"] = 'music'
+            x["media_content_type"] = getmediacontenttype(x["media_content_id"])
+            library_info.children.append(item_payload(x, MEDIA_CLASS_APP, x["media_content_type"], can_play=True, can_expand=False))        
 
     #print("library info:")
     #pp = pprint.PrettyPrinter(indent=4)
